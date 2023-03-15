@@ -5,6 +5,7 @@ def main():
     assert len(sys.argv) == 2, 'You need to pass exactly one input file'
 
     input_file              = sys.argv[1]
+    numa_compacted          = os.path.splitext(input_file)[0] + '_numa_compacted'
     sorted_output_file      = os.path.splitext(input_file)[0] + '_sorted_output'
     numa_A_output_file      = os.path.splitext(input_file)[0] + '_numa_A_output'
     numa_B_output_file      = os.path.splitext(input_file)[0] + '_numa_B_output'
@@ -15,19 +16,40 @@ def main():
     Reading input file
 
     Line Example:
-        <index> <numba_node_A> <numba_node_B> <frequency> 
+        <index> <numba_node_A> <numba_node_B> 
     '''
-    numa_data = []
+    numa_data_1 = []
     with open(input_file, 'r') as f:
         for line in f.readlines():
             data = line.strip().split()
             data = [int(x) for x in data]
-            numa_data.append(data) 
+            numa_data_1.append(data) 
+
+    '''
+    Couting index frequency in file
+
+    '''
+    seen = []
+    numa_data = []
+    with open(numa_compacted, 'w') as f:
+        for i in range(len(numa_data_1)):
+            if numa_data_1[i] in seen:
+                continue
+            seen.append(numa_data_1[i])
+            count = 1
+            for j in range(i+1, len(numa_data_1)):
+                if numa_data_1[i] == numa_data_1[j]: 
+                    count += 1
+
+            f.write(f"{numa_data_1[i][0]} {numa_data_1[i][1]} {numa_data_1[i][2]} {count}\n")
+            numa_data_1[i].append(count)
+            numa_data.append(numa_data_1[i])
 
     '''
     Writing sorted output file
     Sorted by <index>
     '''
+    print(numa_data)
     numa_data = sorted(numa_data)
     with open(sorted_output_file, 'w') as f:
         for line in numa_data:
@@ -87,7 +109,8 @@ def main():
     1 0 <freq_1x0>
     1 1 <freq_1x1>
     '''
-    len_matrix = len(numa_freq.keys())
+    len_matrix = max(numa_freq.keys()) + 1
+    print(len_matrix)
     numa_matrix = [[0 for _ in range(len_matrix)] for _ in range(len_matrix)]
     for line in numa_data:
         numa_matrix[line[1]][line[2]] += line[-1]
