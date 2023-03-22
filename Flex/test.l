@@ -47,6 +47,7 @@ third rule does not take input after the enter***/
     else if(chaves != 0) printf(")"); 
     else printf("%s", yytext);}
 
+/*Before the main of the code, the functions needed to run the parsing are written*/
 
 "int main" {
     main_o = 1;
@@ -110,8 +111,7 @@ int main(){
           which runs the Rule Section*/
 // yytext is the text in the buffer
     
-    // Uncomment the lines below 
-    // to take input from file
+    /*Collects the data that needs to be analyzed, "type", "vector" and "file*/
     FILE *fp;
     char filename[50];
     char varname[31];
@@ -119,6 +119,8 @@ int main(){
     scanf("%s %s %s", type, varname, filename);
     fp = fopen(filename,"r");
     yyin = fp;
+    
+    /*initializes the libraries needed to run parsing */
     printf("#include <numa.h>\n");
     printf("#include <numaif.h>\n");
     printf("#include <string.h>\n");
